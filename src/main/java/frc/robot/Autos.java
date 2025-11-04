@@ -46,7 +46,7 @@ public class Autos {
     }
 
     public SendableChooser<Command> configureChooser(SendableChooser<Command> chooser){
-        chooser.addOption("Left", new PathPlannerAuto("Small"));
+        chooser.addOption("Left", new PathPlannerAuto("Test"));
         
 
         return chooser; 

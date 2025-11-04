@@ -55,9 +55,9 @@ public class RobotContainer {
     public RobotContainer() {
         autos.makeNamedCommands();
 
-        autoChooserManual = new SendableChooser<Command>();
-        autoChooserManual = autos.configureChooser(autoChooserManual);
-        autoChooser = AutoBuilder.buildAutoChooser("Tests");
+        // autoChooserManual = new SendableChooser<Command>();
+        // autoChooserManual = autos.configureChooser(autoChooserManual);
+        autoChooser = AutoBuilder.buildAutoChooser("Line");
         SmartDashboard.putData("Auto Mode", autoChooser);
         SmartDashboard.putData("lazyAuto2000", lazyAuto2000);
         SmartDashboard.putData("SmartPathfinding", autoDriveLocation);
