@@ -74,10 +74,10 @@ public class RobotContainer {
     Autos autos = new Autos(drivetrain);
 
     /* Path follower */
-    private final SendableChooser<Command> autoChooser;
+    //private final SendableChooser<Command> autoChooser;
     //private SendableChooser<Command> autoChooserManual;
     //public static SendableChooser<String> lazyAuto2000 = new SendableChooser<String>();
-    public static SendableChooser<Integer> autoDriveLocation = new SendableChooser<Integer>();
+    //public static SendableChooser<Integer> autoDriveLocation = new SendableChooser<Integer>();
 
 
     public RobotContainer() {
@@ -86,11 +86,16 @@ public class RobotContainer {
         
         // autoChooserManual = new SendableChooser<Command>();
         // autoChooserManual = autos.configureChooser(autoChooserManual);
-        autoChooser = AutoBuilder.buildAutoChooser("Line");
-        SmartDashboard.putData("Auto Mode", autoChooser);
-        //SmartDashboard.putData("lazyAuto2000", lazyAuto2000);
-        SmartDashboard.putData("SmartPathfinding", autoDriveLocation);
+
+        // autoChooser = AutoBuilder.buildAutoChooser("Line");
+        // SmartDashboard.putData("Auto Mode", autoChooser);
+
+        // SmartDashboard.putData("lazyAuto2000", lazyAuto2000);
+
+        // SmartDashboard.putData("SmartPathfinding", autoDriveLocation); 
+
         //SmartDashboard.putData("Auto Mode 2000", autoChooserManual);
+
 
 
         configureBindings();
@@ -135,12 +140,12 @@ public class RobotContainer {
         drivetrain.registerTelemetry(logger::telemeterize);
     }
 
-    // public Command getAutonomousCommand() {
-    //     return Commands.print("No autonomous command configured");
-    // }
-    public Command getAutonomousCommand() { 
-        /* Run the path selected from the auto chooser */
-        return autoChooser.getSelected();
+    public Command getAutonomousCommand() {
+        return Commands.print("No autonomous command configured");
     }
+    // public Command getAutonomousCommand() { 
+    //     /* Run the path selected from the auto chooser */
+    //     return autoChooser.getSelected();
+    // }
 
 }
