@@ -26,6 +26,34 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 
+import static edu.wpi.first.units.Units.*;
+
+import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
+import com.ctre.phoenix6.swerve.SwerveRequest;
+
+import com.pathplanner.lib.auto.AutoBuilder;
+
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.RepeatCommand;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
+import edu.wpi.first.wpilibj2.command.button.CommandPS4Controller;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
+
+//import frc.robot.commands.autoScore;
+
+import frc.robot.generated.TunerConstants;
+
+import frc.robot.subsystems.CommandSwerveDrivetrain;
+
 public class RobotContainer {
     private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
     private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
@@ -47,21 +75,22 @@ public class RobotContainer {
 
     /* Path follower */
     private final SendableChooser<Command> autoChooser;
-    private SendableChooser<Command> autoChooserManual;
-    public static SendableChooser<String> lazyAuto2000 = new SendableChooser<String>();
+    //private SendableChooser<Command> autoChooserManual;
+    //public static SendableChooser<String> lazyAuto2000 = new SendableChooser<String>();
     public static SendableChooser<Integer> autoDriveLocation = new SendableChooser<Integer>();
 
 
     public RobotContainer() {
         autos.makeNamedCommands();
 
+        
         // autoChooserManual = new SendableChooser<Command>();
         // autoChooserManual = autos.configureChooser(autoChooserManual);
         autoChooser = AutoBuilder.buildAutoChooser("Line");
         SmartDashboard.putData("Auto Mode", autoChooser);
-        SmartDashboard.putData("lazyAuto2000", lazyAuto2000);
+        //SmartDashboard.putData("lazyAuto2000", lazyAuto2000);
         SmartDashboard.putData("SmartPathfinding", autoDriveLocation);
-        // SmartDashboard.putData("Auto Mode 2000", autoChooserManual);
+        //SmartDashboard.putData("Auto Mode 2000", autoChooserManual);
 
 
         configureBindings();
