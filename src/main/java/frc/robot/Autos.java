@@ -27,7 +27,6 @@ public class Autos {
     private final SwerveRequest.RobotCentric forwardStraight = new SwerveRequest.RobotCentric()
         .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
 
-
     // enum autos { 
     //     Nothing, 
     //     Calibration10, 
@@ -47,6 +46,7 @@ public class Autos {
 
     public SendableChooser<Command> configureChooser(SendableChooser<Command> chooser){
         chooser.addOption("Line", new PathPlannerAuto("Line"));
+        chooser.addOption("Square", new PathPlannerAuto("Square"));
         
 
         return chooser; 
