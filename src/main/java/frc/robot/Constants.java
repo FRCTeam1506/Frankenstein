@@ -32,13 +32,12 @@ public class Constants {
     public class SwerveConstants {
 
         public static final double driveKP = 1.5;
-        public static final double driveKI = 0;
-        public static final double driveKD = 0.075;
+        public static final double driveKI = 0.15; //0
+        public static final double driveKD = 0.175;//0.075
 
         public static final double alignKP = 1.5; //1.5
-        public static final double alignKI = 0;
-        public static final double alignKD = 0.075;
-
+        public static final double alignKI = 0.15;//0
+        public static final double alignKD = 0.175;//0.075
         public static final double dMaxVelocity = 1;
         public static final double dMaxAccel = 2;
 
