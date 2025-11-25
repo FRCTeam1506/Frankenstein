@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -79,6 +80,11 @@ public class Robot extends TimedRobot {
   public void teleopExit() {}
 
   @Override
+  public void robotInit(){
+    
+  }
+
+  @Override
   public void testInit() {
     CommandScheduler.getInstance().cancelAll();
   }
@@ -90,5 +96,18 @@ public class Robot extends TimedRobot {
   public void testExit() {}
 
   @Override
-  public void simulationPeriodic() {}
+public void simulationPeriodic() {
+    if (RobotBase.isSimulation() && m_robotContainer.getDrivetrain() != null) {
+        // This line is crucial for the simulation to stay open
+        m_robotContainer.getDrivetrain().simulationPeriodic(); 
+    }
+}
+  // @Override
+  // public void simulationPeriodic() {
+  //   if (RobotBase.isSimulation() && m_robotContainer.getDrivetrain() != null) {
+  //           // This is where you might call specific vendor simulation updates
+  //           // Example (check your library documentation for exact call):
+  //           // m_robotContainer.getDrivetrain().updateSimState(); 
+  //       }
+  // }
 }

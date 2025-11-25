@@ -11,6 +11,7 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -82,7 +83,10 @@ public class RobotContainer {
     }
 
     private void configureBindings() {
-        // Note that X is defined as forward according to WPILib convention,
+
+        if (drivetrain != null) {
+            // Set up all commands and button bindings here
+            // Note that X is defined as forward according to WPILib convention,
         // and Y is defined as to the left according to WPILib convention.
         drivetrain.setDefaultCommand(
             // Drivetrain will execute this command periodically
@@ -118,6 +122,44 @@ public class RobotContainer {
         joystick.L1().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
         drivetrain.registerTelemetry(logger::telemeterize);
+        }
+
+        // // Note that X is defined as forward according to WPILib convention,
+        // // and Y is defined as to the left according to WPILib convention.
+        // drivetrain.setDefaultCommand(
+        //     // Drivetrain will execute this command periodically
+        //     drivetrain.applyRequest(() ->
+        //         drive.withVelocityX(-joystick.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward)
+        //             .withVelocityY(-joystick.getLeftX() * MaxSpeed) // Drive left with negative X (left)
+        //             .withRotationalRate(-joystick.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
+        //     )
+        // );
+
+        // // Idle while the robot is disabled. This ensures the configured
+        // // neutral mode is applied to the drive motors while disabled.
+        // final var idle = new SwerveRequest.Idle();
+        // RobotModeTriggers.disabled().whileTrue(
+        //     drivetrain.applyRequest(() -> idle).ignoringDisable(true)
+        // );
+
+        // joystick.povLeft().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
+
+        // joystick.cross().whileTrue(drivetrain.applyRequest(() -> brake));
+        // joystick.circle().whileTrue(drivetrain.applyRequest(() ->
+        //     point.withModuleDirection(new Rotation2d(-joystick.getLeftY(), -joystick.getLeftX()))
+        // ));
+
+        // // Run SysId routines when holding back/start and X/Y.
+        // // Note that each routine should be run exactly once in a single log.
+        // joystick.share().and(joystick.triangle()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
+        // joystick.share().and(joystick.square()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
+        // joystick.share().and(joystick.triangle()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
+        // joystick.share().and(joystick.square()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
+
+        // // reset the field-centric heading on left bumper press
+        // joystick.L1().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
+
+        // drivetrain.registerTelemetry(logger::telemeterize);
     }
 
     // public Command getAutonomousCommand() {
@@ -126,6 +168,12 @@ public class RobotContainer {
     public Command getAutonomousCommand() { 
         /* Run the path selected from the auto chooser */
         return autoChooser.getSelected();
+    }
+
+
+
+    public CommandSwerveDrivetrain getDrivetrain() {
+        return drivetrain;
     }
 
 }
