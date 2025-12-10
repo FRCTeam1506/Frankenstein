@@ -7,6 +7,9 @@ package frc.robot;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.Constants.VisionConstants;
+
+import org.ironmaple.simulation.SimulatedArena;
 
 import com.ctre.phoenix6.Utils;
 import com.pathplanner.lib.commands.PathfindingCommand;
@@ -27,6 +30,9 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import com.pathplanner.lib.auto.AutoBuilder;
 
 public class Robot extends TimedRobot {
+
+  private final boolean kUseLimelight = true;
+
   private Command m_autonomousCommand;
 
   private final RobotContainer m_robotContainer;
@@ -40,6 +46,42 @@ public class Robot extends TimedRobot {
   @Override
   public void robotPeriodic() {
     CommandScheduler.getInstance().run(); 
+
+
+    if (kUseLimelight) {
+      var driveState = m_robotContainer.drivetrain.getState();
+      double headingDeg = driveState.Pose.getRotation().getDegrees();
+      double omegaRps = Units.radiansToRotations(driveState.Speeds.omegaRadiansPerSecond);
+      m_robotContainer.drivetrain.setVisionMeasurementStdDevs(VecBuilder.fill(0.05, 0.05, 999999));
+
+      LimelightHelpers.SetRobotOrientation(VisionConstants.LL_CENTER, headingDeg, 0, 0, 0, 0, 0);
+      LimelightHelpers.SetRobotOrientation(VisionConstants.LL_LEFT, headingDeg, 0, 0, 0, 0, 0);
+      LimelightHelpers.SetRobotOrientation(VisionConstants.LL_FRONT, headingDeg, 0, 0, 0, 0, 0);
+
+      var llMeasurement = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(VisionConstants.LL_CENTER);
+      var llMeasurement_left = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(VisionConstants.LL_LEFT);
+      var llMeasurement_front = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(VisionConstants.LL_FRONT);
+
+      if (llMeasurement != null && llMeasurement.tagCount > 0 && Math.abs(omegaRps) < 2.0 && LimelightHelpers.getTA(VisionConstants.LL_CENTER) > 0.33) {
+
+        // Pose2d pose = new Pose2d(llMeasurement.pose.getX(), llMeasurement.pose.getY(), llMeasurement.pose.getRotation().minus(new Rotation2d(0))); //minus rotation2d(math.pi)
+        m_robotContainer.drivetrain.addVisionMeasurement(llMeasurement.pose, llMeasurement.timestampSeconds);
+        System.out.println("back" + llMeasurement.pose);
+
+        // SmartDashboard.putNumberArray("MT2Result_Center", new double[]{llMeasurement.pose.getX(), llMeasurement.pose.getY()});
+      }
+
+      if (llMeasurement_left != null && llMeasurement_left.tagCount > 0 && Math.abs(omegaRps) < 2.0 && LimelightHelpers.getTA(VisionConstants.LL_LEFT) > 0.33) {
+        m_robotContainer.drivetrain.addVisionMeasurement(llMeasurement_left.pose, llMeasurement_left.timestampSeconds);
+        System.out.println("left" + llMeasurement_left.pose);
+      }
+
+      if (llMeasurement_front != null && llMeasurement_front.tagCount > 0 && Math.abs(omegaRps) < 2.0 && LimelightHelpers.getTA(VisionConstants.LL_FRONT) > 0.34) {
+        m_robotContainer.drivetrain.addVisionMeasurement(llMeasurement_front.pose, llMeasurement_front.timestampSeconds);
+        System.out.println("front" + llMeasurement_front.pose);
+      }
+    }
+
   }
 
   @Override
@@ -81,7 +123,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void robotInit(){
-    
+
   }
 
   @Override
@@ -97,9 +139,16 @@ public class Robot extends TimedRobot {
 
   @Override
 public void simulationPeriodic() {
+      // Obtains the default instance of the simulation world, which is a Crescendo Arena.
+  // Overrides the default simulation
+  SimulatedArena.getInstance();
+  SimulatedArena.getInstance().simulationPeriodic();
+  
     if (RobotBase.isSimulation() && m_robotContainer.getDrivetrain() != null) {
+
         // This line is crucial for the simulation to stay open
         m_robotContainer.getDrivetrain().simulationPeriodic(); 
+        
     }
 }
   // @Override
