@@ -96,7 +96,9 @@ public class PoseAlign extends Command {
     startPos = drivetrain.getState().Pose;
 
     int id = (int) drivetrain.getTag();
+    //if(id == null) {
 
+    //}
     // if(id == -1){
     //   id = 6;
     //   isFinished = true;
@@ -104,8 +106,10 @@ public class PoseAlign extends Command {
     // if(left){
     //   goalPose = CommandSwerveDrivetrain.tagPoseAndymarkMap.get(id).transformBy(VisionConstants.leftBranch);
     // }
-    // else{
-      goalPose = CommandSwerveDrivetrain.tagPoseAndymarkMap.get(id).transformBy(new Transform2d(0.2, 0, new Rotation2d(Math.toRadians(180))));
+    // // else{
+      if(CommandSwerveDrivetrain.tagPoseAndymarkMap.get(id) != null) {
+        goalPose = CommandSwerveDrivetrain.tagPoseAndymarkMap.get(id).transformBy(new Transform2d(0.2, 0, new Rotation2d(Math.toRadians(180))));
+      }
     //}
 
     this.timer.restart();
