@@ -50,9 +50,9 @@ public class PoseAlign extends Command {
           SwerveConstants.driveKD * 1.25);
   private final PIDController yController =
       new PIDController(
-          SwerveConstants.driveKP * 1.4,
+          SwerveConstants.driveKP * 1.7, //1.4
           SwerveConstants.driveKI,
-          SwerveConstants.driveKD * 1.25);
+          SwerveConstants.driveKD * 1.5); //1.25
 
   ProfiledPIDController thetaController = new ProfiledPIDController(SwerveConstants.alignKP * 4, SwerveConstants.alignKI, SwerveConstants.alignKD, new Constraints(SwerveConstants.tMaxVelocity, SwerveConstants.tMaxAccel));
 
@@ -108,7 +108,9 @@ public class PoseAlign extends Command {
     // }
     // // else{
       if(CommandSwerveDrivetrain.tagPoseAndymarkMap.get(id) != null) {
-        goalPose = CommandSwerveDrivetrain.tagPoseAndymarkMap.get(id).transformBy(new Transform2d(0.2, 0, new Rotation2d(Math.toRadians(180))));
+        goalPose = CommandSwerveDrivetrain.tagPoseAndymarkMap.get(id).transformBy(new Transform2d(0.5, 0, new Rotation2d(Math.toRadians(180))));
+      } else {
+        drivetrain.setControl(request.withSpeeds(new ChassisSpeeds(0, 0, 0)));
       }
     //}
 
@@ -128,10 +130,17 @@ public class PoseAlign extends Command {
 
     Pose2d currPose2d = drivetrain.getState().Pose;
     ChassisSpeeds chassisSpeeds = this.holonomicDriveController.calculate(currPose2d, goalPose, 0, goalPose.getRotation());
-
-    drivetrain.setControl(request.withSpeeds(chassisSpeeds));
-    System.out.println(CommandSwerveDrivetrain.tagPoseAndymarkMap.get(id));
     
+    // drivetrain.setControl(request.withSpeeds(chassisSpeeds));
+
+    // if(CommandSwerveDrivetrain.tagPoseAndymarkMap.get(id) != null) {
+      if(id != -1) {
+      drivetrain.setControl(request.withSpeeds(chassisSpeeds));
+    } else {
+      drivetrain.setControl(request.withSpeeds(new ChassisSpeeds(0, 0, 0)));
+    }
+    System.out.println(CommandSwerveDrivetrain.tagPoseAndymarkMap.get(id));
+
   }
 
   @Override

@@ -130,7 +130,8 @@ public class RobotContainer {
         joystick.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
         joystick.povDown().whileTrue(new PoseAlign(drivetrain));
-        //joystick.rightBumper().whileTrue(new OnlyTurn2Deg(drivetrain));
+        joystick.rightBumper().whileTrue(new OnlyTurn2Deg(drivetrain, () -> -joystick.getLeftX() * MaxSpeed, () -> -joystick.getLeftY() * MaxSpeed));
+        
 
         drivetrain.registerTelemetry(logger::telemeterize);
         }
