@@ -14,7 +14,8 @@ import edu.wpi.first.wpilibj2.command.button.POVButton;
 /** Add your docs here. */
 public class j {
 
-public static final PS4Controller driver = new PS4Controller(0);
+public static final PS4Controller driverPS = new PS4Controller(0);
+public static final XboxController driver = new XboxController(0);
 public static final XboxController operator = new XboxController(1);
 public static final XboxController driverRumble = new XboxController(2);
  
@@ -50,21 +51,27 @@ public static final PS4Controller test = new PS4Controller(5);
   public static JoystickButton XboxRT = new JoystickButton(operator, XboxController.Axis.kRightTrigger.value);
   public static JoystickButton XboxLT = new JoystickButton(operator, XboxController.Axis.kLeftTrigger.value);
 
+//   public static Joysti XboxLeftY = new JoystickButton(driver, XboxController.Axis.kLeftY.value);
+//   public static JoystickButton XboxRightY = new JoystickButton(driver, XboxController.Axis.kLeftY.value);
+//   public static JoystickButton XboxLeftX = new JoystickButton(driver, XboxController.Axis.kLeftY.value);
+//   public static JoystickButton XboxRightX = new JoystickButton(driver, XboxController.Axis.kLeftY.value);
+
+
   // buttons
-  public static JoystickButton dA = new JoystickButton(driver, PS4Controller.Button.kCross.value);
-  public static JoystickButton dB = new JoystickButton(driver, PS4Controller.Button.kCircle.value);
+  public static JoystickButton dA = new JoystickButton(driverPS, PS4Controller.Button.kCross.value);
+  public static JoystickButton dB = new JoystickButton(driverPS, PS4Controller.Button.kCircle.value);
   public static JoystickButton dY =
-      new JoystickButton(driver, PS4Controller.Button.kTriangle.value);
-  public static JoystickButton dX = new JoystickButton(driver, PS4Controller.Button.kSquare.value);
+      new JoystickButton(driverPS, PS4Controller.Button.kTriangle.value);
+  public static JoystickButton dX = new JoystickButton(driverPS, PS4Controller.Button.kSquare.value);
   public static JoystickButton dTouchpad =
-      new JoystickButton(driver, PS4Controller.Button.kTouchpad.value);
+      new JoystickButton(driverPS, PS4Controller.Button.kTouchpad.value);
   public static JoystickButton dShare =
-      new JoystickButton(driver, PS4Controller.Button.kShare.value);
+      new JoystickButton(driverPS, PS4Controller.Button.kShare.value);
   public static JoystickButton dOptions =
-      new JoystickButton(driver, PS4Controller.Button.kOptions.value);
-  public static JoystickButton dPS = new JoystickButton(driver, PS4Controller.Button.kPS.value);
-  public static JoystickButton dL3 = new JoystickButton(driver, PS4Controller.Button.kL3.value);
-  public static JoystickButton dR3 = new JoystickButton(driver, PS4Controller.Button.kR3.value);
+      new JoystickButton(driverPS, PS4Controller.Button.kOptions.value);
+  public static JoystickButton dPS = new JoystickButton(driverPS, PS4Controller.Button.kPS.value);
+  public static JoystickButton dL3 = new JoystickButton(driverPS, PS4Controller.Button.kL3.value);
+  public static JoystickButton dR3 = new JoystickButton(driverPS, PS4Controller.Button.kR3.value);
 
   public static JoystickButton oA = new JoystickButton(operator, PS4Controller.Button.kCross.value);
   public static JoystickButton oB =
@@ -106,10 +113,10 @@ public static final PS4Controller test = new PS4Controller(5);
   public static JoystickButton oRB = new JoystickButton(operator, PS4Controller.Button.kR1.value);
   public static JoystickButton oLB = new JoystickButton(operator, PS4Controller.Button.kL1.value);
 
-  public static JoystickButton dRT = new JoystickButton(driver, PS4Controller.Button.kR2.value);
-  public static JoystickButton dLT = new JoystickButton(driver, PS4Controller.Button.kL2.value);
-  public static JoystickButton dRB = new JoystickButton(driver, PS4Controller.Button.kR1.value);
-  public static JoystickButton dLB = new JoystickButton(driver, PS4Controller.Button.kL1.value);
+  public static JoystickButton dRT = new JoystickButton(driverPS, PS4Controller.Button.kR2.value);
+  public static JoystickButton dLT = new JoystickButton(driverPS, PS4Controller.Button.kL2.value);
+  public static JoystickButton dRB = new JoystickButton(driverPS, PS4Controller.Button.kR1.value);
+  public static JoystickButton dLB = new JoystickButton(driverPS, PS4Controller.Button.kL1.value);
 
   public static JoystickButton tRT = new JoystickButton(test, PS4Controller.Button.kR2.value);
   public static JoystickButton tLT = new JoystickButton(test, PS4Controller.Button.kL2.value);
@@ -117,10 +124,10 @@ public static final PS4Controller test = new PS4Controller(5);
   public static JoystickButton tLB = new JoystickButton(test, PS4Controller.Button.kL1.value);
 
   // dpad
-  public static POVButton dUp = new POVButton(driver, 0);
-  public static POVButton dRight = new POVButton(driver, 90);
-  public static POVButton dDown = new POVButton(driver, 180);
-  public static POVButton dLeft = new POVButton(driver, 270);
+  public static POVButton dUp = new POVButton(driverPS, 0);
+  public static POVButton dRight = new POVButton(driverPS, 90);
+  public static POVButton dDown = new POVButton(driverPS, 180);
+  public static POVButton dLeft = new POVButton(driverPS, 270);
 
   public static POVButton oUp = new POVButton(operator, 0);
   public static POVButton oRight = new POVButton(operator, 90);

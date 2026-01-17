@@ -66,19 +66,19 @@ public class Robot extends TimedRobot {
 
         // Pose2d pose = new Pose2d(llMeasurement.pose.getX(), llMeasurement.pose.getY(), llMeasurement.pose.getRotation().minus(new Rotation2d(0))); //minus rotation2d(math.pi)
         m_robotContainer.drivetrain.addVisionMeasurement(llMeasurement.pose, llMeasurement.timestampSeconds);
-        System.out.println("back" + llMeasurement.pose);
+        // System.out.println("back" + llMeasurement.pose);
 
         // SmartDashboard.putNumberArray("MT2Result_Center", new double[]{llMeasurement.pose.getX(), llMeasurement.pose.getY()});
       }
 
       if (llMeasurement_left != null && llMeasurement_left.tagCount > 0 && Math.abs(omegaRps) < 2.0 && LimelightHelpers.getTA(VisionConstants.LL_LEFT) > 0.33) {
         m_robotContainer.drivetrain.addVisionMeasurement(llMeasurement_left.pose, llMeasurement_left.timestampSeconds);
-        System.out.println("left" + llMeasurement_left.pose);
+        // System.out.println("left" + llMeasurement_left.pose);
       }
 
       if (llMeasurement_front != null && llMeasurement_front.tagCount > 0 && Math.abs(omegaRps) < 2.0 && LimelightHelpers.getTA(VisionConstants.LL_FRONT) > 0.34) {
         m_robotContainer.drivetrain.addVisionMeasurement(llMeasurement_front.pose, llMeasurement_front.timestampSeconds);
-        System.out.println("front" + llMeasurement_front.pose);
+        // System.out.println("front" + llMeasurement_front.pose);
       }
     }
 

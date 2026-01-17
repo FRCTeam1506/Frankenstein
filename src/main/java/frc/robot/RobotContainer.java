@@ -16,14 +16,13 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandPS4Controller;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
-import frc.robot.Commands.Vision.OnlyTurn2Deg;
+import frc.robot.Commands.Vision.Followtag;
 import frc.robot.Commands.Vision.PoseAlign;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
@@ -32,9 +31,6 @@ import frc.robot.subsystems.CommandSwerveDrivetrain;
 
 //import frc.robot.commands.autoScore;
 
-import frc.robot.generated.TunerConstants;
-
-import frc.robot.subsystems.CommandSwerveDrivetrain;
 
 public class RobotContainer {
     private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
@@ -91,7 +87,6 @@ public class RobotContainer {
     }
 
     private void configureBindings() {
-
         if (drivetrain != null) {
             // Set up all commands and button bindings here
             // Note that X is defined as forward according to WPILib convention,
@@ -130,7 +125,7 @@ public class RobotContainer {
         joystick.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
         joystick.povDown().whileTrue(new PoseAlign(drivetrain));
-        joystick.rightBumper().whileTrue(new OnlyTurn2Deg(drivetrain, () -> -joystick.getLeftX() * MaxSpeed, () -> -joystick.getLeftY() * MaxSpeed));
+        joystick.rightBumper().whileTrue(new Followtag(drivetrain));//, () -> -joystick.getLeftX() * MaxSpeed, () -> -joystick.getLeftY() * MaxSpeed));
         
 
         drivetrain.registerTelemetry(logger::telemeterize);

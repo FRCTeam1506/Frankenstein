@@ -22,6 +22,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.LimelightHelpers;
 import frc.robot.Robot;
+import frc.robot.j;
 import frc.robot.Constants.SwerveConstants;
 import frc.robot.Constants.VisionConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
@@ -30,7 +31,7 @@ import frc.robot.subsystems.Vision;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
 
-public class OnlyTurn2Deg extends Command {
+public class Followtag extends Command {
   private final CommandSwerveDrivetrain drivetrain;
   private Pose2d targetPose;
 
@@ -46,17 +47,15 @@ public class OnlyTurn2Deg extends Command {
   private final PIDController turnController = new PIDController(0.08, 0, 0);
   //double goalAngle;
 
-  public DoubleSupplier leftY;
-  public DoubleSupplier leftX;
-
-  
+  public double leftY;
+  public double leftX;
 
 
-  public OnlyTurn2Deg(CommandSwerveDrivetrain drivetrain, DoubleSupplier leftX, DoubleSupplier leftY) {
+  public Followtag(CommandSwerveDrivetrain drivetrain){//, DoubleSupplier leftX, DoubleSupplier leftY) {
     this.drivetrain = drivetrain;
     this.timer = new Timer();
-    this.leftX = leftX;
-    this.leftY = leftY;
+    // this.leftX = leftX;
+    // this.leftY = leftY;
     addRequirements(drivetrain);
     //thetaController.enableContinuousInput(-Math.PI, Math.PI);
 
@@ -93,10 +92,13 @@ public class OnlyTurn2Deg extends Command {
     
     // 1. Get the CURRENT tx value every frame (20ms)
     double currentTx = LimelightHelpers.getTX(VisionConstants.LL_CENTER);
+
+    double maxSpeed = 5.29;
     
     // 2. Get the CURRENT joystick values
-    double xSpeed = leftX.getAsDouble();
-    double ySpeed = leftY.getAsDouble();
+    double xSpeed = -j.driver.getLeftX() * maxSpeed;//* //leftX.getAsDouble();
+    double ySpeed = -j.driver.getLeftY() * maxSpeed;
+    System.out.println(xSpeed + ", " + ySpeed);
 
     // 3. Calculate rotation based on the fresh tx
     double rotationOutput = 0;
@@ -106,11 +108,15 @@ public class OnlyTurn2Deg extends Command {
 
     // 4. Pass the DOUBLES (not the Suppliers) to ChassisSpeeds
     // Note: Use field-relative or robot-relative based on your preference
-    // if (ySpeed < 0.1 && xSpeed < 0.1) {
-    //   drivetrain.setControl(request.withSpeeds(new ChassisSpeeds(0, 0, rotationOutput)));
-    // } else {
-      drivetrain.setControl(request.withSpeeds(new ChassisSpeeds(ySpeed, xSpeed, rotationOutput)));
-    //}
+    if (Math.abs(ySpeed/maxSpeed) < 0.1 && Math.abs(xSpeed/maxSpeed) < 0.1) {
+        // If joystick inputs are near zero, stop the robot
+        drivetrain.setControl(request.withSpeeds(new ChassisSpeeds(0, 0, 0)));
+    } else {
+        // Otherwise, move the robot with the calculated rotation
+        
+        drivetrain.setControl(request.withSpeeds(new ChassisSpeeds(ySpeed, xSpeed, rotationOutput)));
+        System.out.println("Inner"+xSpeed + ", " + ySpeed);
+    }
   }
 
   @Override
