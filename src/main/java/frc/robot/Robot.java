@@ -9,7 +9,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.Constants.VisionConstants;
 
-import org.ironmaple.simulation.SimulatedArena;
+// import org.ironmaple.simulation.SimulatedArena;
 
 import com.ctre.phoenix6.Utils;
 import com.pathplanner.lib.commands.PathfindingCommand;
@@ -141,8 +141,8 @@ public class Robot extends TimedRobot {
 public void simulationPeriodic() {
       // Obtains the default instance of the simulation world, which is a Crescendo Arena.
   // Overrides the default simulation
-  SimulatedArena.getInstance();
-  SimulatedArena.getInstance().simulationPeriodic();
+  // SimulatedArena.getInstance();
+  // SimulatedArena.getInstance().simulationPeriodic();
   
     if (RobotBase.isSimulation() && m_robotContainer.getDrivetrain() != null) {
 
