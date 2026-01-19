@@ -8,6 +8,7 @@ import static edu.wpi.first.units.Units.Newton;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PS4Controller;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
 
@@ -19,16 +20,7 @@ public static final XboxController driver = new XboxController(0);
 public static final XboxController operator = new XboxController(1);
 public static final XboxController driverRumble = new XboxController(2);
  
-
-// public static final XboxController driverRumble = new XboxController(2);
-// public static final PS4Controller operatorRumble = new PS4Controller(3);
-    
-//   public static final PS4Controller driver = new PS4Controller(0);
-//   public static final PS4Controller operator = new PS4Controller(1);
 public static final PS4Controller test = new PS4Controller(5);
-
-//   public static final XboxController XboxOperator = new XboxController(1);
-
 
   //Xbox operator Buttons
   public static POVButton XboxUp = new POVButton(operator, 0);

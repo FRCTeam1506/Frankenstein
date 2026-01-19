@@ -17,17 +17,7 @@ import edu.wpi.first.math.geometry.Transform2d;
 
 public class Constants {
 
-    public static double scoreSpeed = 0.8;
-    public static boolean raisable;
-    
-
     public static final Slot0Configs slot0Configs = new Slot0Configs().withKS(0.24).withKV(0.12).withKP(4.8).withKI(0).withKD(0.1);
-
-
-
-
-
-    
 
     public class SwerveConstants {
 
@@ -46,6 +36,15 @@ public class Constants {
 
         //on the fly path constraitns
         public static PathConstraints oTF_Constraints = new PathConstraints(5.3, 5, Math.toRadians(270), Math.toRadians(360));    
+    }
+
+    public class ShooterConstants {
+        public static final int LEFTSHOOTER_ID = 0; //Yet to be set
+        public static final int RIGHTSHOOTER_ID = 0; //Yet to be set
+    }
+    public class TurretConstants {
+        public static final int TURRET_ID = 55; //Yet to be set
+        public static final int ENCODER_ID = 0; //Yet to be set 
     }
 
     public class CandleConstants {

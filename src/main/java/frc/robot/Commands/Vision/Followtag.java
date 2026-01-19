@@ -22,7 +22,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.LimelightHelpers;
 import frc.robot.Robot;
-import frc.robot.j;
+import frc.robot.RobotContainer;
 import frc.robot.Constants.SwerveConstants;
 import frc.robot.Constants.VisionConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
@@ -96,8 +96,8 @@ public class Followtag extends Command {
     double maxSpeed = 5.29;
     
     // 2. Get the CURRENT joystick values
-    double xSpeed = -j.driver.getLeftX() * maxSpeed;//* //leftX.getAsDouble();
-    double ySpeed = -j.driver.getLeftY() * maxSpeed;
+    double xSpeed = -RobotContainer.driver.getLeftX() * maxSpeed;//* //leftX.getAsDouble();
+    double ySpeed = -RobotContainer.driver.getLeftY() * maxSpeed;
     System.out.println(xSpeed + ", " + ySpeed);
 
     // 3. Calculate rotation based on the fresh tx
