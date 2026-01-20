@@ -121,8 +121,10 @@ public class RobotContainer {
         driver.povDown().whileTrue(new PoseAlign(drivetrain));
         driver.rightBumper().whileTrue(new Followtag(drivetrain));//, () -> -joystick.getLeftX() * MaxSpeed, () -> -joystick.getLeftY() * MaxSpeed));
         
-        driver.rightTrigger().whileTrue(new InstantCommand( () -> shooter.variableShot(0.1)));
-        driver.leftTrigger().whileTrue(new InstantCommand( () -> turret.rotateTurret(1)));
+        // driver.rightTrigger().whileTrue(new InstantCommand( () -> shooter.variableShot(0.1)));
+        driver.leftTrigger().whileTrue(new InstantCommand( () -> turret.rotateTurret(-0.1)));
+        driver.rightTrigger().whileTrue(new InstantCommand( () -> turret.rotateTurret(0.1)));
+        driver.rightTrigger().whileFalse(new InstantCommand( () -> turret.rotateTurret(0)));
         driver.leftTrigger().whileFalse(new InstantCommand( () -> turret.rotateTurret(0)));
 
 
