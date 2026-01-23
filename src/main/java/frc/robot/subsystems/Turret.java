@@ -16,6 +16,7 @@ import frc.robot.Constants.TurretConstants;
 
 public class Turret extends SubsystemBase {
   double turretAngle;
+  
   /** Creates a new Turret. */
     private TalonFX Turret = new TalonFX(TurretConstants.TURRET_ID);
     // private Encoder encoder = new Encoder(0, 0);
@@ -31,6 +32,10 @@ public class Turret extends SubsystemBase {
 
   public void rotateTurret(double turretSpeed) {
     Turret.set(turretSpeed);
+  }
+
+  public void setTurretPos(double pos) {
+    Turret.set
   }
 
   @Override
