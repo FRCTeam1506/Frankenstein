@@ -28,6 +28,11 @@ import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Turret;
 
 public class RobotContainer {
+    double gyroHeading;
+    double targetTurretAngle;
+    double setPoint;
+
+    
     public final static CommandXboxController driver = new CommandXboxController(0);
     public final static CommandXboxController operator = new CommandXboxController(1);
 
@@ -115,10 +120,17 @@ public class RobotContainer {
         driver.back().and(driver.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
         driver.back().and(driver.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
 
+
+        // driver.povDown().onTrue(new InstantCommand(() -> turret.shootModeChange(false)));
+        // driver.povUp().onTrue(new InstantCommand(() -> turret.shootModeChange(true)));
+        //driver.y().whileTrue(new InstantCommand(() -> turret.zeroTurret()));
+
         // reset the field-centric heading on left bumper press
         driver.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
-        driver.povDown().whileTrue(new PoseAlign(drivetrain));
+
+        driver.povDown().whileTrue(new InstantCommand( () -> turret.fixedTurretPosition()));
+        // driver.povDown().whileTrue(new PoseAlign(drivetrain));
         driver.rightBumper().whileTrue(new Followtag(drivetrain));//, () -> -joystick.getLeftX() * MaxSpeed, () -> -joystick.getLeftY() * MaxSpeed));
         
         // driver.rightTrigger().whileTrue(new InstantCommand( () -> shooter.variableShot(0.1)));

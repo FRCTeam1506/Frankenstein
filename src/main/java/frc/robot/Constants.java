@@ -46,6 +46,11 @@ public class Constants {
         public static final int TURRET_ID = 55; //Yet to be set
         public static final int ENCODER_ID = 0; //Yet to be set 
     }
+    public class IntakeConstants {
+        public static final int LEFTINTAKE_ID = 0; //Yet to be set
+        public static final int RIGHTINTAKE_ID = 0; //Yet to be set
+
+    }
 
     public class CandleConstants {
         public static final int CANDLE_ID = 62;
