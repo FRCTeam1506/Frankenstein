@@ -39,8 +39,8 @@ public class Constants {
     }
 
     public class ShooterConstants {
-        public static final int LEFTSHOOTER_ID = 0; //Yet to be set
-        public static final int RIGHTSHOOTER_ID = 0; //Yet to be set
+        public static final int LEFTSHOOTER_ID = 62; 
+        public static final int RIGHTSHOOTER_ID = 61;
     }
     public class TurretConstants {
         public static final int TURRET_ID = 55; //Yet to be set

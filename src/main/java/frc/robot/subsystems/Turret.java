@@ -139,65 +139,65 @@ public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrai
   }
 
   public void turretPosition(double goalX, double goalY) {
-      // theta = Math.atan((this.goalY - vRobotY) / (this.goalX - vRobotX));
-      // angleToGoal = 90 - theta;
-      // heading = drivetrain.getPigeon2().getYaw().getValueAsDouble() / 360;
-      // turretAngleTarget = angleToGoal - heading;
-      // finalTurretPos = turretAngleTarget * 13.2;
-      // Turret.setControl(m_motmag.withPosition(finalTurretPos));
-      // System.out.println(finalTurretPos);
+      theta = Math.atan((this.goalY - vRobotY) / (this.goalX - vRobotX));
+      angleToGoal = 90 - theta;
+      heading = drivetrain.getPigeon2().getYaw().getValueAsDouble() / 360;
+      turretAngleTarget = angleToGoal - heading;
+      finalTurretPos = turretAngleTarget * 13.2;
+      Turret.setControl(m_motmag.withPosition(finalTurretPos));
+      System.out.println(finalTurretPos);
   }
 
   public void shootModeChange(boolean up) {
-    // if (up == true) {
-    //   shootMode += 1;
-    // } else {
-    //   shootMode -= 1;
-    // }
+    if (up == true) {
+      shootMode += 1;
+    } else {
+      shootMode -= 1;
+    }
   }
 
   @Override
   public void periodic() {
-  heading = drivetrain.getPigeon2().getYaw().getValueAsDouble() / 360;
-    turretAngleTarget = 0 - heading;
-    finalTurretPos = turretAngleTarget * 13.2;
-    Turret.setControl(m_motmag.withPosition(finalTurretPos));
-    System.out.println(finalTurretPos);
-  //   vRobotX = drivetrain.getState().Pose.getX();
-  //   vRobotY = drivetrain.getState().Pose.getY();
-  //   theta = Math.atan((goalY - vRobotY) / (goalX - vRobotX));
+     heading = drivetrain.getPigeon2().getYaw().getValueAsDouble() / 360;
+    // turretAngleTarget = 0 - heading;
+    // finalTurretPos = turretAngleTarget * 13.2;
+    // Turret.setControl(m_motmag.withPosition(finalTurretPos));
+    // System.out.println(finalTurretPos);
+    vRobotX = drivetrain.getState().Pose.getX();
+    vRobotY = drivetrain.getState().Pose.getY();
+    theta = Math.atan((goalY - vRobotY) / (goalX - vRobotX));
 
 
-  
-  //   switch (shootMode) {
-  //     case 1:
-  //       turretAngleTarget = 0 - heading;
-  //       finalTurretPos = turretAngleTarget * 13.2;
-  //       Turret.setControl(m_motmag.withPosition(finalTurretPos));
-  //       System.out.println(finalTurretPos);
-  //       break;
+    
+    switch (shootMode) {
+      case 1:
+        turretAngleTarget = 0 - heading;
+        finalTurretPos = turretAngleTarget * 13.2;
+        Turret.setControl(m_motmag.withPosition(finalTurretPos));
+        System.out.println(finalTurretPos);
+        break;
 
-  //     case 2:
-  //       turretPosition(goalX, goalY);
-  //       break;
+      case 2:
+        turretPosition(goalX, goalY);
+        break;
 
-  //     case 3:
-  //       if (red == true) {
-  //           turretPosition(goalLeftRedY, goalLeftRedX);
-  //       }
-  //       else {
-  //         turretPosition(goalLeftBlueY, goalLeftBlueX);
-  //       }
-  //       break;
-  //     case 4:
-  //       if (red == true) {
-  //         turretPosition(goalRightRedY, goalRightRedX);
-  //       }
-  //       else {
-  //         turretPosition(goalRightBlueY, goalRightBlueX);
-  //       }
-  //       break;
-  //   }
+      case 3:
+        if (red == true) {
+            turretPosition(goalLeftRedY, goalLeftRedX);
+        }
+        else {
+          turretPosition(goalLeftBlueY, goalLeftBlueX);
+        }
+        break;
+      case 4:
+        if (red == true) {
+          turretPosition(goalRightRedY, goalRightRedX);
+        }
+        else {
+          turretPosition(goalRightBlueY, goalRightBlueX);
+        }
+        break;
+    }
   //   //add some sort of variable that gives the turret angle based on the encoder position
   //   //turretAngle = (encoder.getDistance() / 4096) * 360;
 

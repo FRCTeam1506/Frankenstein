@@ -26,10 +26,10 @@ public class Shooter extends SubsystemBase {
 
     // config.Slot0 = Constants.slot0Configs;
     
-    /*Use if it makes sense
+    //Use if it makes sense
     leftShooter.getConfigurator().apply(new MotorOutputConfigs().withInverted(InvertedValue.CounterClockwise_Positive));
-    rightShooter.getConfigurator().apply(new MotorOutputConfigs().withInverted(InvertedValue.CounterClockwise_Positive));
-    */
+   rightShooter.getConfigurator().apply(new MotorOutputConfigs().withInverted(InvertedValue.Clockwise_Positive));
+    
 
     leftShooter.getConfigurator().apply(config);
     rightShooter.getConfigurator().apply(config);
@@ -40,14 +40,19 @@ public class Shooter extends SubsystemBase {
 
   public void shootMax(){
     leftShooter.set(1);
-    rightShooter.set(1);
+    rightShooter.set(-1);
     System.out.println("MAX SHOT");
   }
 
   public void variableShot(double power){
     leftShooter.set(power);
-    rightShooter.set(power);
+    rightShooter.set(-power);
     System.out.println("VARIABLE SHOT");
+  }
+  public void shooterStop(){
+    leftShooter.set(0);
+    rightShooter.set(0);
+    System.out.println("STOP SHOOTER");
   }
 
 
