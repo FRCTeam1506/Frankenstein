@@ -26,7 +26,7 @@ import frc.robot.generated.TunerConstants;
 public class Turret extends SubsystemBase {
   boolean red;
   Optional<Alliance> alliance = DriverStation.getAlliance();
-  public static int shootMode = 1; //1 = keep heading at 0. 2 = Main shoot to goal. 3 = mail left. 4 = mail right.
+  public static int shootMode = 0; //1 = keep heading at 0. 2 = Main shoot to goal. 3 = mail left. 4 = mail right.
 
   //Variables for getting angle to goal.
   double goalX = 0;
@@ -105,8 +105,6 @@ public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrai
 
     config.Slot0 = slot0Configs;
 
-    //TODO: ADD PRO LICENSE TO MOTORS
-    m_motmag.EnableFOC = true; //will the elevator go faster?
 
     Turret.getConfigurator().apply(motionMagicConfigs);
     Turret.getConfigurator().apply(slot0Configs); 

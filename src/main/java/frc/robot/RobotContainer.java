@@ -123,7 +123,7 @@ public class RobotContainer {
 
         driver.povDown().onTrue(new InstantCommand(() -> turret.shootModeChange(false)));
         driver.povUp().onTrue(new InstantCommand(() -> turret.shootModeChange(true)));
-        //driver.y().whileTrue(new InstantCommand(() -> turret.zeroTurret()));
+        driver.y().whileTrue(new InstantCommand(() -> turret.zeroTurret()));
 
         // reset the field-centric heading on left bumper press
         driver.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
