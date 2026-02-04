@@ -6,6 +6,7 @@ package frc.robot.subsystems;
 
 import static frc.robot.Constants.slot0Configs;
 
+import java.lang.System.Logger;
 import java.util.Optional;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
@@ -15,13 +16,18 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.math.interpolation.InterpolatingTreeMap;
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.networktables.StructPublisher;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants;
 import frc.robot.Robot;
 import frc.robot.Constants.TurretConstants;
@@ -33,7 +39,7 @@ public class Turret extends SubsystemBase {
   Pose2d vRobotPose;
   double latency = 0.15; // Tuned constant
   Translation2d futurePos;
-  Translation2d goalLocation = new Translation2d(5.229, 3.431);
+  //Translation2d goalLocation = new Translation2d(5.229, 3.431);
   Translation2d targetVec;
   double dist;
   double idealHorizontalSpeed = 1; //double idealHorizontalSpeed = ShooterTable.getSpeed(dist);
@@ -52,8 +58,8 @@ public class Turret extends SubsystemBase {
   public static int shootMode = 0; //1 = keep heading at 0. 2 = Main shoot to goal. 3 = mail left. 4 = mail right.
 
   //Variables for getting angle to goal.
-  double goalX = 5.229;
-  double goalY = 3.431;
+  double goalX = 4.6228;
+  double goalY = 4.034536;
   double theta;
   double angleToGoal;
   double turretAngleTarget;
@@ -82,14 +88,25 @@ public class Turret extends SubsystemBase {
   double heading;
   double turretAngle;
 
-
   double testAngle;
+  double angleToPos;
+
+  Translation2d targetLocation = new Translation2d(goalX, goalY);
+  Translation2d robotPos;
+
+  Rotation2d fieldTargetAngle;
+  Rotation2d robotTargetAngle; 
+
+  public final static CommandXboxController driver = new CommandXboxController(0);
   
   /** Creates a new Turret. */
     private TalonFX Turret = new TalonFX(TurretConstants.TURRET_ID);
     final MotionMagicVoltage m_motmag = new MotionMagicVoltage(0);
     
     // private Encoder encoder = new Encoder(0, 0);
+  // double dx;
+  // double dy;
+  // Rotation2d fieldAngle;
 
   public Turret() {
     if (alliance.get() == Alliance.Red) {
@@ -125,6 +142,8 @@ public class Turret extends SubsystemBase {
     slot0Configs.kD = 0.1;
 
     config.Slot0 = slot0Configs;
+
+    m_motmag.EnableFOC = true;
 
 
     Turret.getConfigurator().apply(motionMagicConfigs);
@@ -177,12 +196,43 @@ public class Turret extends SubsystemBase {
   }
 
   public void setTurretToAngle (double angle) {
-    Turret.setPosition((angle / 360) * 13.5); //Turret angle from degree to ticks.
+    angleToPos = ((angle /360) * 13.5);
+    Turret.setControl(m_motmag.withPosition(angleToPos));
     System.out.println("set Turret angle to" + angle);
   }
 
+
   @Override
   public void periodic() {
+    //This doesn't turn the turret
+    // if (drivetrain.getState().Pose.getMeasureX() != null) {
+    //   theta = Math.atan2(goalY - drivetrain.getState().Pose.getY(), goalX - drivetrain.getState().Pose.getX());
+    //   angleToGoal = 90 - theta;
+    //   setTurretToAngle(theta);
+
+
+    //   // if (robotPos.getX() > targetLocation.getX()) {
+    //   //   System.out.println("North");
+    //   // } else {
+    //   //   System.out.println("South");
+    //   // }
+
+    //   // if (robotPos.getY() > targetLocation.getY()) {
+    //   //   System.out.println("East");
+    //   // } else {
+    //   //   System.out.println("West");
+    //   // }
+    // }
+
+
+    //Kinda works
+    robotPos = new Translation2d(drivetrain.getState().Pose.getX(), drivetrain.getState().Pose.getY());
+    fieldTargetAngle = targetLocation.minus(robotPos).getAngle();
+    robotTargetAngle = fieldTargetAngle.minus(drivetrain.getState().Pose.getRotation());
+    if (!driver.y().getAsBoolean()) {
+      setTurretToAngle(robotTargetAngle.getDegrees());
+    }
+
     // targetVec = goalLocation.minus(futurePos);
     // dist = targetVec.getNorm();
     // robotVelVec = new Translation2d(drivetrain.getState().Speeds.vxMetersPerSecond, drivetrain.getState().Speeds.vyMetersPerSecond);
@@ -196,14 +246,14 @@ public class Turret extends SubsystemBase {
     // System.out.println("Angle" + testAngle);
 
     //System.out.println(shootMode); 
-    heading = drivetrain.getPigeon2().getYaw().getValueAsDouble() / 360;
+    //heading = drivetrain.getPigeon2().getYaw().getValueAsDouble() / 360;
     // turretAngleTarget = 0 - heading;
     // finalTurretPos = turretAngleTarget * 13.2;
     // Turret.setControl(m_motmag.withPosition(finalTurretPos));
     // System.out.println(finalTurretPos);
-    vRobotX = drivetrain.getState().Pose.getX() + (drivetrain.getState().Speeds.vxMetersPerSecond /* * latency*/);//times latency??
-    vRobotY = drivetrain.getState().Pose.getY()+ (drivetrain.getState().Speeds.vyMetersPerSecond /* * latency*/);//times latency??;
-    theta = Math.atan((goalY - vRobotY) / (goalX - vRobotX));
+    // vRobotX = drivetrain.getState().Pose.getX() + (drivetrain.getState().Speeds.vxMetersPerSecond /* * latency*/);//times latency??
+    // vRobotY = drivetrain.getState().Pose.getY()+ (drivetrain.getState().Speeds.vyMetersPerSecond /* * latency*/);//times latency??;
+    // theta = Math.atan((goalY - vRobotY) / (goalX - vRobotX));
 
 
 
