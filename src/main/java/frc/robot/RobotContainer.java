@@ -41,7 +41,7 @@ public class RobotContainer {
     //Subsystems
     Autos autos = new Autos(drivetrain);
     final Shooter shooter = new Shooter();
-    Turret turret = new Turret();
+    Turret turret = new Turret(drivetrain);
 
     
     private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
