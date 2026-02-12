@@ -64,12 +64,12 @@ public class Robot extends TimedRobot {
       // var llMeasurement_front = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(VisionConstants.LL_FRONT);
       // System.out.println(LimelightHelpers.getLatestResults(VisionConstants.LL_CENTER).botpose_wpiblue[0]);
       //System.out.println("Tag Counts " + LimelightHelpers.getTV(VisionConstants.LL_CENTER));
-      System.out.println("MT2 Pose: " + llMeasurement.pose + " LL Tag Count: " + llMeasurement.tagCount + " Omega RPS: " + Math.abs(omegaRps) + " LL TA: " + LimelightHelpers.getTA(VisionConstants.LL_CENTER));
+      //System.out.println("MT2 Pose: " + llMeasurement.pose + " LL Tag Count: " + llMeasurement.tagCount + " Omega RPS: " + Math.abs(omegaRps) + " LL TA: " + LimelightHelpers.getTA(VisionConstants.LL_CENTER));
       if (llMeasurement != null && llMeasurement.tagCount > 0 && Math.abs(omegaRps) < 2.0 && LimelightHelpers.getTA(VisionConstants.LL_CENTER) > 0.1) {
 
         // Pose2d pose = new Pose2d(llMeasurement.pose.getX(), llMeasurement.pose.getY(), llMeasurement.pose.getRotation().minus(new Rotation2d(0))); //minus rotation2d(math.pi)
         m_robotContainer.drivetrain.addVisionMeasurement(llMeasurement.pose, llMeasurement.timestampSeconds);
-        System.out.println("back" + llMeasurement.pose);
+        //System.out.println("back" + llMeasurement.pose);
 
         // SmartDashboard.putNumberArray("MT2Result_Center", new double[]{llMeasurement.pose.getX(), llMeasurement.pose.getY()});
       }

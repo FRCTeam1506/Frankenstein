@@ -1,0 +1,233 @@
+// Copyright (c) FIRST and other WPILib contributors.
+// Open Source Software; you can modify and/or share it under the terms of
+// the WPILib BSD license file in the root directory of this project.
+
+package frc.robot.subsystems;
+
+import static frc.robot.Constants.slot0Configs;
+
+import java.lang.System.Logger;
+import java.util.Optional;
+
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.MotionMagicVoltage;
+import com.ctre.phoenix6.hardware.Pigeon2;
+import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.NeutralModeValue;
+
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
+import edu.wpi.first.math.interpolation.InterpolatingTreeMap;
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.networktables.StructPublisher;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.Constants;
+import frc.robot.Robot;
+import frc.robot.Constants.TurretConstants;
+import frc.robot.generated.TunerConstants;
+
+public class Turret extends SubsystemBase {
+  //public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
+  private final CommandSwerveDrivetrain drivetrain; 
+
+
+  //double idealSpeed = getShooterSpeedForDistance(distance);
+  
+
+  boolean red;
+  Optional<Alliance> alliance = DriverStation.getAlliance();
+  public static int shootMode = 0; //1 = keep heading at 0. 2 = Main shoot to goal. 3 = mail left. 4 = mail right.
+
+
+  double goalRedX, goalRedY, goalBlueX, goalBlueY;
+  double theta, thetaX, thetaY;
+  double heading;
+  double toDegree;
+  double turretAngle, finalTurretAngle;
+  double angleToPos;
+  //MAILING
+  //RED
+  //RIGHT
+  final double goalRightRedY = 0;
+  final double goalRightRedX = 0;
+  //LEFT
+  final double goalLeftRedY = 0;
+  final double goalLeftRedX = 0;
+
+  //BLUE
+  //RIGHT
+  final double goalRightBlueY = 0;
+  final double goalRightBlueX = 0;
+  //LEFT
+  final double goalLeftBlueY = 0;
+  final double goalLeftBlueX = 0;
+
+
+    Pose2d robotPose;
+    Pose2d vRobotPose;
+    Translation2d chassisSpeed;
+    Translation2d goalLocation;
+
+
+
+  //private static final InterpolatingDoubleTreeMap flightTime = new InterpolatingDoubleTreeMap();
+
+  public final static CommandXboxController driver = new CommandXboxController(0);
+  
+  /** Creates a new Turret. */
+    private TalonFX Turret = new TalonFX(TurretConstants.TURRET_ID);
+    final MotionMagicVoltage m_motmag = new MotionMagicVoltage(0);
+    
+    // private Encoder encoder = new Encoder(0, 0);
+  // double dx;
+  // double dy;
+  // Rotation2d fieldAngle;
+
+  public Turret(CommandSwerveDrivetrain drivetrain) {
+    this.drivetrain = drivetrain;
+    if (alliance.get() == Alliance.Red) {
+      red = true;
+    } else {
+      red = false;
+    }
+
+    var talonFXConfigs = new TalonFXConfiguration();
+
+    // talonFXConfigs.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+
+    TalonFXConfiguration config = new TalonFXConfiguration();
+    config.CurrentLimits.StatorCurrentLimitEnable = true;
+    config.CurrentLimits.StatorCurrentLimit = 80;
+
+    config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+
+    Turret.getConfigurator().apply(config);
+
+    var motionMagicConfigs = talonFXConfigs.MotionMagic;
+    motionMagicConfigs.MotionMagicCruiseVelocity = 220; // 80 rps cruise velocity //60 rps gets to L4 in 1.92s //100 //160 //220 before 3/20 bc elevator maltensioned //220 FRCC
+    motionMagicConfigs.MotionMagicAcceleration = 260; // 160 rps/s acceleration (0.5 seconds) //220
+    motionMagicConfigs.MotionMagicJerk = 3200; // 1600 rps/s^2 jerk (0.1 seconds)
+
+    // set slot 0 gains
+    var slot0Configs = talonFXConfigs.Slot0;
+    slot0Configs.kS = 0.24; // add 0.24 V to overcome friction
+    slot0Configs.kV = 0.12; // apply 12 V for a target velocity of 100 rps
+    // PID runs on position
+    slot0Configs.kP = 2.5; //4.8
+    slot0Configs.kI = 0;
+    slot0Configs.kD = 0.1;
+
+    config.Slot0 = slot0Configs;
+
+    m_motmag.EnableFOC = true;
+
+
+    Turret.getConfigurator().apply(motionMagicConfigs);
+    Turret.getConfigurator().apply(slot0Configs); 
+
+    // flightTime.put(1.0, 1.0); //TUNE THESE!!
+    // flightTime.put(2.0, 1.5);
+    // flightTime.put(3.0, 1.75);
+    // flightTime.put(4.0, 2.0);
+    // flightTime.put(5.0, 2.5);
+  }
+
+  public void rotateTurret(double turretSpeed) {
+    Turret.set(turretSpeed);
+  }
+
+  public void setTurretPos(double pos) {
+    Turret.setPosition(pos);
+  }
+
+  public void zeroTurret() {
+    Turret.setControl(m_motmag.withPosition(0));
+  }
+
+  public void shootModeChange(boolean up) {
+    if (up == true) {
+      shootMode += 1;
+    } else {
+      shootMode -= 1;
+    }
+  }
+
+
+  public void setTurretToAngle (double angle) {
+    angleToPos = ((angle /360) * 13.2);
+    Turret.setControl(m_motmag.withPosition(angleToPos));
+    //System.out.println("set Turret angle to" + angle);
+  }
+
+  @Override
+  public void periodic() {
+  
+
+    chassisSpeed = new Translation2d(drivetrain.getState().Speeds.vxMetersPerSecond, drivetrain.getState().Speeds.vyMetersPerSecond);
+    robotPose = new Pose2d(drivetrain.getState().Pose.getX(), drivetrain.getState().Pose.getY(), drivetrain.getState().Pose.getRotation());
+    //if (chassisSpeed != null) {
+      vRobotPose = robotPose;//.getTranslation().minus(chassisSpeed.times(1)); //CHANGE TO DIST TO GOAL!
+    // } else {
+    //   vRobotPose = robotPose;
+    // }
+
+
+    switch (shootMode) {
+      case 1:
+        if (red == true) {
+            goalLocation = new Translation2d(goalRedX, goalRedY);
+            thetaX = goalLocation.getX() - vRobotPose.getX();
+            thetaY = goalLocation.getY() - vRobotPose.getY();
+        } else {
+            goalLocation = new Translation2d(goalBlueX, goalBlueY);
+            thetaX = goalLocation.getX() - vRobotPose.getX();
+            thetaY = goalLocation.getY() - vRobotPose.getY();
+        }
+        break;
+    
+      case 2:
+        if (red == true) {
+          goalLocation = new Translation2d(goalLeftRedX, goalLeftRedY);
+          thetaX = goalLocation.getX() - vRobotPose.getX();
+          thetaY = goalLocation.getY() - vRobotPose.getY();
+        } else {
+          goalLocation = new Translation2d(goalLeftBlueX, goalLeftBlueY);
+          thetaX = goalLocation.getX() - vRobotPose.getX();
+          thetaY = goalLocation.getY() - vRobotPose.getY();
+        }
+        break;
+
+      case 3:
+        if (red == true) {
+          goalLocation = new Translation2d(goalRightRedX, goalRightRedY);
+          thetaX = goalLocation.getX() - vRobotPose.getX();
+          thetaY = goalLocation.getY() - vRobotPose.getY();
+        } else {
+          goalLocation = new Translation2d(goalRightBlueX, goalRightBlueY);
+          thetaX = goalLocation.getX() - vRobotPose.getX();
+          thetaY = goalLocation.getY() - vRobotPose.getY();
+        }
+        break;
+    }
+
+    System.out.println("shot Mode: " + shootMode);
+    System.out.println("goal " + goalLocation);
+    System.out.println("vRobot: " + vRobotPose);
+    
+    heading = drivetrain.getState().Pose.getRotation().getDegrees();
+    theta = Math.atan2(thetaY, thetaX);
+    toDegree = Math.toDegrees(theta);
+    turretAngle = toDegree - heading;
+    finalTurretAngle = edu.wpi.first.math.MathUtil.inputModulus(turretAngle, -180, 180);
+
+    setTurretToAngle(finalTurretAngle);
+
+  }
+}

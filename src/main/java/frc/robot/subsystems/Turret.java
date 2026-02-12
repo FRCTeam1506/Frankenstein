@@ -23,6 +23,7 @@ import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.math.interpolation.InterpolatingTreeMap;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StructPublisher;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Encoder;
@@ -34,11 +35,13 @@ import frc.robot.Constants.TurretConstants;
 import frc.robot.generated.TunerConstants;
 
 public class Turret extends SubsystemBase {
+  DigitalInput zeroTurret = new DigitalInput(6);
   //public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
   private final CommandSwerveDrivetrain drivetrain; 
 
   //Auto Aim To Hub 
   Pose2d vRobotPose;
+  Pose2d currentRobotPose;
   double latency = 0.15; // Tuned constant
   Translation2d futurePos;
 
@@ -105,6 +108,9 @@ public class Turret extends SubsystemBase {
   double thetaX, thetaY;
   double toDegree;
 
+  double timeOffset;
+  private static final InterpolatingDoubleTreeMap flightTime = new InterpolatingDoubleTreeMap();
+
   public final static CommandXboxController driver = new CommandXboxController(0);
   
   /** Creates a new Turret. */
@@ -163,6 +169,11 @@ public class Turret extends SubsystemBase {
     // turretPos.put(90.0, 2.453125);
     // turretPos.put(180.0, 5.595215);
     // turretPos.put(270.0, 9.096680);
+    flightTime.put(1.0, 1.0);
+    flightTime.put(2.0, 1.5);
+    flightTime.put(3.0, 1.75);
+    flightTime.put(4.0, 2.0);
+    flightTime.put(5.0, 2.5);
   }
 
   public void rotateTurret(double turretSpeed) {
@@ -207,144 +218,63 @@ public class Turret extends SubsystemBase {
   public void setTurretToAngle (double angle) {
     angleToPos = ((angle /360) * 13.2);
     Turret.setControl(m_motmag.withPosition(angleToPos));
-    System.out.println("set Turret angle to" + angle);
+    //System.out.println("set Turret angle to" + angle);
   }
 
 
   @Override
   public void periodic() {
+    
+    vRobotY = drivetrain.getState().Pose.getY() - (drivetrain.getState().Speeds.vyMetersPerSecond * 1) + 0.1;
+    vRobotX = drivetrain.getState().Pose.getX() - (drivetrain.getState().Speeds.vxMetersPerSecond * 1);
+
     if (red == true) {
       goalX = 12;
     } else {
       goalX = 4;
     }
-    // preTheta = (goalY - drivetrain.getState().Pose.getY()) / (goalX - drivetrain.getState().Pose.getX());
-    // theta = Math.atan(preTheta);
+      // preTheta = (goalY - drivetrain.getState().Pose.getY()) / (goalX - drivetrain.getState().Pose.getX());
+      // theta = Math.atan(preTheta);
     heading = drivetrain.getState().Pose.getRotation().getDegrees();
-    // thetaX = goalX - drivetrain.getState().Pose.getX();
-    // thetaY = goalY - drivetrain.getState().Pose.getY();
+      // thetaX = goalX - drivetrain.getState().Pose.getX();
+      // thetaY = goalY - drivetrain.getState().Pose.getY();
     theta = Math.atan2(thetaY, thetaX);
     toDegree = Math.toDegrees(theta);
     turretAngle = toDegree - heading;
     finalTurretAngle = edu.wpi.first.math.MathUtil.inputModulus(turretAngle, -180, 180);
 
     setTurretToAngle(finalTurretAngle);
-    //System.out.println("Robot X" + drivetrain.getState().Pose.getX());
-    
-
-    //This doesn't turn the turret
-    // if (drivetrain.getState().Pose.getMeasureX() != null) {
-    //   theta = Math.atan((goalY - drivetrain.getState().Pose.getY()) / (goalX - drivetrain.getState().Pose.getX()));
-    //   angleToGoal = 90 - theta;
-    //   setTurretToAngle(theta);
-    //   System.out.println("theta" + theta);
-
-
-    //   // if (robotPos.getX() > targetLocation.getX()) {
-    //   //   System.out.println("North");
-    //   // } else {
-    //   //   System.out.println("South");
-    //   // }
-
-    //   // if (robotPos.getY() > targetLocation.getY()) {
-    //   //   System.out.println("East");
-    //   // } else {
-    //   //   System.out.println("West");
-    //   // }
-    // }
-
-
-    //Kinda works
-    // robotPos = new Translation2d(drivetrain.getState().Pose.getX(), drivetrain.getState().Pose.getY());
-    // fieldTargetAngle = targetLocation.minus(robotPos).getAngle();
-    // robotTargetAngle = fieldTargetAngle.minus(drivetrain.getState().Pose.getRotation());
-    // if (!driver.y().getAsBoolean()) {
-    //   setTurretToAngle(robotTargetAngle.getDegrees());
-    // }
-
-    // targetVec = goalLocation.minus(futurePos);
-    // dist = targetVec.getNorm();
-    // idealHorizontalSpeed = 1;
-    // robotVelVec = new Translation2d(drivetrain.getState().Speeds.vxMetersPerSecond, drivetrain.getState().Speeds.vyMetersPerSecond);
-    // shotVec = targetVec.div(dist).times(idealHorizontalSpeed).minus(robotVelVec);
-    // turretAngle = shotVec.getAngle().getDegrees();
-    // setTurretToAngle(turretAngle);
-    // System.out.println("turretAngle" + turretAngle);
-    // robotVelVec = new Translation2d(drivetrain.getState().Speeds.vxMetersPerSecond, drivetrain.getState().Speeds.vyMetersPerSecond);
-    // shotVec = targetVec.div(dist).times(idealHorizontalSpeed).minus(robotVelVec);
-    // finalTurretAngle = shotVec.getAngle().getDegrees();
-    // newHorizontalSpeed = shotVec.getNorm();
-    // System.out.println(finalTurretAngle);
-    
-    // setTurretToAngle(90 - Math.atan((goalY - drivetrain.getState().Pose.getY()) / (goalX - drivetrain.getState().Pose.getX())));
-    // testAngle = 90 - Math.atan((goalY - drivetrain.getState().Pose.getY()) / (goalX - drivetrain.getState().Pose.getX()));
-    // System.out.println("Angle" + testAngle);
-
-    //System.out.println(shootMode); 
-    //heading = drivetrain.getPigeon2().getYaw().getValueAsDouble() / 360;
-    // turretAngleTarget = 0 - heading;
-    // finalTurretPos = turretAngleTarget * 13.2;
-    // Turret.setControl(m_motmag.withPosition(finalTurretPos));
-    // System.out.println(finalTurretPos);
-    // vRobotX = drivetrain.getState().Pose.getX() + (drivetrain.getState().Speeds.vxMetersPerSecond /* * latency*/);//times latency??
-    // vRobotY = drivetrain.getState().Pose.getY()+ (drivetrain.getState().Speeds.vyMetersPerSecond /* * latency*/);//times latency??;
-    // theta = Math.atan((goalY - vRobotY) / (goalX - vRobotX));
-
-
+      //System.out.println("Robot X" + drivetrain.getState().Pose.getX());
 
     
-    // switch (shootMode) {
-    //   case 1:
-    //     turretAngleTarget = 0 - heading;
-    //     finalTurretPos = turretAngleTarget * 13.2;
-    //     Turret.setControl(m_motmag.withPosition(finalTurretPos));
-    //     System.out.println(finalTurretPos);
-    //     break;
-
-    //   case 2:
-    //     turretPosition(goalX, goalY);
-    //     break;
-
-    //   case 3:
-    //     if (red == true) {
-    //         turretPosition(goalLeftRedY, goalLeftRedX);
-    //     }
-    //     else {
-    //       turretPosition(goalLeftBlueY, goalLeftBlueX);
-    //     }
-    //     break;
-    //   case 4:
-    //     if (red == true) {
-    //       turretPosition(goalRightRedY, goalRightRedX);
-    //     }
-    //     else {
-    //       turretPosition(goalRightBlueY, goalRightBlueX);
-    //     }
-    //     break;
-    // }
     switch (shootMode) {
       case 1:
-        thetaX = goalX - drivetrain.getState().Pose.getX();
-        thetaY = goalY - drivetrain.getState().Pose.getY();
+        goalLocation = new Translation2d(goalX, goalY);
+        thetaX = goalLocation.getX() - vRobotX;
+        thetaY = goalLocation.getY() - vRobotY;
         break;
     
       case 2:
         if (red == true) {
-          thetaX = goalLeftRedX - drivetrain.getState().Pose.getX();
-          thetaY = goalLeftRedY - drivetrain.getState().Pose.getY();
+          goalLocation = new Translation2d(goalLeftRedX, goalLeftRedY);
+          thetaX = goalLocation.getX() - vRobotX;
+          thetaY = goalLocation.getY() - vRobotY;
         } else {
-          thetaX = goalLeftBlueX - drivetrain.getState().Pose.getX();
-          thetaY = goalLeftBlueY - drivetrain.getState().Pose.getY();
+          goalLocation = new Translation2d(goalLeftBlueX, goalLeftBlueY);
+          thetaX = goalLocation.getX() - vRobotX;
+          thetaY = goalLocation.getY() - vRobotY;
         }
         break;
 
       case 3:
         if (red == true) {
-          thetaX = goalRightRedX - drivetrain.getState().Pose.getX();
-          thetaY = goalRightRedY - drivetrain.getState().Pose.getY();
+          goalLocation = new Translation2d(goalRightRedX, goalRightRedY);
+          thetaX = goalLocation.getX() - vRobotX;
+          thetaY = goalLocation.getY() - vRobotY;
         } else {
-          thetaX = goalRightBlueX - drivetrain.getState().Pose.getX();
-          thetaY = goalRightBlueY - drivetrain.getState().Pose.getY();
+          goalLocation = new Translation2d(goalRightBlueX, goalRightBlueY);
+          thetaX = goalLocation.getX() - vRobotX;
+          thetaY = goalLocation.getY() - vRobotY;
         }
         break;
     }
@@ -376,9 +306,15 @@ public class Turret extends SubsystemBase {
     } else if (shootMode < 0) {
       shootMode = 0;
     }
-    System.out.println("shoot mode:" + shootMode);
+    //System.out.println("shoot mode:" + shootMode);
     // if (Turret.getPosition().getValueAsDouble() > 6.5 || Turret.getPosition().getValueAsDouble() < -6.5) {
     //   Turret.set(0);
+    // }
+    //System.out.println("Zero" + zeroTurret.get());
+    if (zeroTurret.get() == false) {
+      System.out.println("false");
+    }// else {
+      // System.out.println("false");
     // }
   }
 }
