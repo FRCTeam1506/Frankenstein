@@ -40,10 +40,9 @@ public class Turret extends SubsystemBase {
   private final CommandSwerveDrivetrain drivetrain; 
 
   //Auto Aim To Hub 
-  Pose2d vRobotPose;
-  Pose2d currentRobotPose;
   double latency = 0.15; // Tuned constant
   Translation2d futurePos;
+
 
   double idealHorizontalSpeed = 1; //double idealHorizontalSpeed = ShooterTable.getSpeed(dist);
   Translation2d robotVelVec;
@@ -60,6 +59,7 @@ public class Turret extends SubsystemBase {
   Optional<Alliance> alliance = DriverStation.getAlliance();
   public static int shootMode = 0; //1 = keep heading at 0. 2 = Main shoot to goal. 3 = mail left. 4 = mail right.
 
+
   //Variables for getting angle to goal.
   double goalX = 12; //Red Goal
   double goalY = 4.034536;
@@ -70,23 +70,38 @@ public class Turret extends SubsystemBase {
   double vRobotY;
   double vRobotX;
 
+  //FIELD LOCATIONS:
+
   //MAILING
+  //RED LINE
+  final double redLine = 12;
+  final double middleX = 7.5;
+  final double middleY = 4;
+  final double blueLine = 3;
+
   //RED
   //RIGHT
-  final double goalRightRedY = 0;
-  final double goalRightRedX = 0;
+  final double goalRightRedY = 7.211;
+  final double goalRightRedX = 13.302;
   //LEFT
-  final double goalLeftRedY = 0;
-  final double goalLeftRedX = 0;
+  final double goalLeftRedY = 0.8;
+  final double goalLeftRedX = 13.302;
 
   //BLUE
   //RIGHT
-  final double goalRightBlueY = 0;
-  final double goalRightBlueX = 0;
+  final double goalRightBlueY = 7.756;
+  final double goalRightBlueX = 3.097;
   //LEFT
-  final double goalLeftBlueY = 0;
-  final double goalLeftBlueX = 0;
+  final double goalLeftBlueY = 3;
+  final double goalLeftBlueX = 0.8;
+
+
+
   double preTheta;
+
+  Pose2d robotPose;
+  double robotPoseX;
+  double robotPoseY;
 
   //InterpolatingDoubleTreeMap turretPos = new InterpolatingDoubleTreeMap();
   double heading;
@@ -96,7 +111,6 @@ public class Turret extends SubsystemBase {
   double angleToPos;
 
   Translation2d targetLocation = new Translation2d(goalX, goalY);
-  Translation2d robotPos;
 
   Rotation2d fieldTargetAngle;
   Rotation2d robotTargetAngle; 
@@ -221,12 +235,22 @@ public class Turret extends SubsystemBase {
     //System.out.println("set Turret angle to" + angle);
   }
 
+  public void manualTurret (double speed) {
+    Turret.set(speed);
+  }
+
 
   @Override
   public void periodic() {
+
+    //System.out.println("shot mode " + shootMode);
     
     vRobotY = drivetrain.getState().Pose.getY() - (drivetrain.getState().Speeds.vyMetersPerSecond * 1) + 0.1;
     vRobotX = drivetrain.getState().Pose.getX() - (drivetrain.getState().Speeds.vxMetersPerSecond * 1);
+
+    robotPose = drivetrain.getState().Pose;
+    robotPoseX = drivetrain.getState().Pose.getX();
+    robotPoseY = drivetrain.getState().Pose.getY();
 
     if (red == true) {
       goalX = 12;
@@ -243,7 +267,7 @@ public class Turret extends SubsystemBase {
     turretAngle = toDegree - heading;
     finalTurretAngle = edu.wpi.first.math.MathUtil.inputModulus(turretAngle, -180, 180);
 
-    setTurretToAngle(finalTurretAngle);
+    //setTurretToAngle(finalTurretAngle);
       //System.out.println("Robot X" + drivetrain.getState().Pose.getX());
 
     
@@ -277,7 +301,38 @@ public class Turret extends SubsystemBase {
           thetaY = goalLocation.getY() - vRobotY;
         }
         break;
+      case 4: //red 
+        if(red == true) {
+          if(robotPoseY < 3) {//left (from red perspective)
+            goalLocation = new Translation2d(goalLeftRedX, goalLeftRedY);
+            thetaX = goalLocation.getX() - vRobotX;
+            thetaY = goalLocation.getY() - vRobotY;
+          }
+          if(robotPoseY > 3) { 
+            goalLocation = new Translation2d(goalRightRedX, goalRightRedY);
+            thetaX = goalLocation.getX() - vRobotX;
+            thetaY = goalLocation.getY() - vRobotY;
+          }
+        }
+        else { //blue
+          if(robotPoseY < 3) { //left (from red perspective)
+            goalLocation = new Translation2d(goalRightBlueX, goalRightBlueY);
+            thetaX = goalLocation.getX() - vRobotX;
+            thetaY = goalLocation.getY() - vRobotY;
+          }
+          if(robotPoseY > 3) {
+            goalLocation = new Translation2d(goalRightBlueX, goalRightBlueY);
+            thetaX = goalLocation.getX() - vRobotX;
+            thetaY = goalLocation.getY() - vRobotY;
+          }
+          
+        }
+
+
+      
+        
     }
+
 
   //   //add some sort of variable that gives the turret angle based on the encoder position
   //   //turretAngle = (encoder.getDistance() / 4096) * 360;
@@ -313,6 +368,9 @@ public class Turret extends SubsystemBase {
     //System.out.println("Zero" + zeroTurret.get());
     if (zeroTurret.get() == false) {
       System.out.println("false");
+      zeroTurret();
+
+
     }// else {
       // System.out.println("false");
     // }

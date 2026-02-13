@@ -125,18 +125,24 @@ public class RobotContainer {
         driver.povUp().onTrue(new InstantCommand(() -> turret.shootModeChange(true)));
         driver.y().whileTrue(new InstantCommand(() -> turret.zeroTurret()));
 
+
         // reset the field-centric heading on left bumper press
         driver.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
 
         //driver.povDown().whileTrue(new InstantCommand( () -> turret.fixedTurretPosition()));
-
+        
+        
         // driver.povDown().whileTrue(new PoseAlign(drivetrain));
         driver.rightBumper().whileTrue(new Followtag(drivetrain));//, () -> -joystick.getLeftX() * MaxSpeed, () -> -joystick.getLeftY() * MaxSpeed));
-        
-        driver.rightTrigger().whileTrue(new InstantCommand( () -> shooter.variableShot(0.3)));
-        driver.rightTrigger().whileFalse(new InstantCommand( () -> shooter.shooterStop()));
-        // driver.leftTrigger().whileTrue(new InstantCommand( () -> turret.rotateTurret(-0.1)));
+        driver.rightTrigger().whileTrue(new InstantCommand( () -> turret.manualTurret(0.05)));
+        driver.rightTrigger().whileFalse(new InstantCommand( () -> turret.manualTurret(0)));
+        driver.leftTrigger().whileTrue(new InstantCommand( () -> turret.manualTurret(-0.05)));
+        driver.leftTrigger().whileFalse(new InstantCommand( () -> turret.manualTurret(0)));
+
+        // driver.rightTrigger().whileTrue(new InstantCommand( () -> shooter.variableShot(0.3)));
+        // driver.rightTrigger().whileFalse(new InstantCommand( () -> shooter.shooterStop()));
+        // // driver.leftTrigger().whileTrue(new InstantCommand( () -> turret.rotateTurret(-0.1)));
         // driver.rightTrigger().whileTrue(new InstantCommand( () -> turret.rotateTurret(0.1)));
         // driver.rightTrigger().whileFalse(new InstantCommand( () -> turret.rotateTurret(0)));
         // driver.leftTrigger().whileFalse(new InstantCommand( () -> turret.rotateTurret(0)));
